@@ -28,11 +28,26 @@ def lint_dir(path):
         pass
 
 def lint_groovy(path):
-    lines = [x.strip() for x in read(path).split('\n') if x != '']
+    file_text = read(path)
+    lines = [x.strip() for x in file_text.split('\n') if x != '']
     print(lines)
+    orphans = []
+
     for line in lines:
         if(re.search("import ", line)):
+            lsp = line.split(".")
+            orphans.append(lsp[len(lsp) - 1])
             print(f"-- {line}")
+    print(f"-- {orphans}")
+    for orphan in orphans:
+        match_result = re.search(f"{orphan}.+\n", file_text)
+        if(match_result): 
+            matched_line = match_result.group(0).replace('\n', '')
+            print(f"{orphan} found | {matched_line}")
+        else:
+            print(f"{orphan} missing!")
+
+    
     # parse content
 
 lint_dir(target_dir)
