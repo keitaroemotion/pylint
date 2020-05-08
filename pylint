@@ -2,23 +2,39 @@
 
 from os      import listdir
 from os.path import isfile, isdir, join
+import re
 
 target_dir = 'tmp'
+target_dir = 'tmp/src/main/groovy/com/huubhr/KotIntegrationInitializeSectionClient.groovy'
 
 def read(file_path):
-    file = open(file_path, "r")
-    printf(file.read())
-    file.close()
+    if(re.match(".+\.groovy$", file_path)):
+        file    = open(file_path, "r")
+        content = file.read()
+        file.close()
+        return content
+    return ''
 
-def read_dir(path):
+def lint_dir(path):
     if(isfile(path)):
         print(f"file: {path}")
+        lint_groovy(path)
     elif(isdir(path)):
         print(f"dir: {path}")
         onlyfiles = [join(path, f) for f in listdir(path)]
         for x in onlyfiles:
-            read_dir(x)
+            lint_dir(x)
     else:
         pass
 
-read_dir(target_dir)
+def lint_groovy(path):
+    lines = [x.strip() for x in read(path).split('\n') if x != '']
+    print(lines)
+    for line in lines:
+        if(re.search("import ", line)):
+            print(f"-- {line}")
+    # parse content
+
+lint_dir(target_dir)
+
+
