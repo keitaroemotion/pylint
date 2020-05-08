@@ -1,0 +1,24 @@
+#!/usr/bin/env python3
+
+from os      import listdir
+from os.path import isfile, isdir, join
+
+target_dir = 'tmp'
+
+def read(file_path):
+    file = open(file_path, "r")
+    printf(file.read())
+    file.close()
+
+def read_dir(path):
+    if(isfile(path)):
+        print(f"file: {path}")
+    elif(isdir(path)):
+        print(f"dir: {path}")
+        onlyfiles = [join(path, f) for f in listdir(path)]
+        for x in onlyfiles:
+            read_dir(x)
+    else:
+        pass
+
+read_dir(target_dir)
